@@ -411,13 +411,6 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
         );
       }
 
-      const productIds = validated.items.map((i) => i.productId);
-      const products = await tx.product.findMany({
-        where: { id: { in: productIds } },
-      });
-
-      const productMap = new Map(products.map((p) => [p.id, p]));
-
       let computedTaxable = 0;
       let computedCgst = 0;
       let computedSgst = 0;
@@ -426,16 +419,54 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
       const gstType = (req.body?.gstType as string) || "CGST_SGST";
       const billItemsData = [];
 
+      // Subtotal is sum of (qty * rate - row_discount) for all items
+      const subtotal = validated.items.reduce(
+        (sum, i) => sum + Math.max(0, (i.quantity * i.rate) - (i.discount || 0)),
+        0
+      );
+      const discount = validated.discount || 0;
+
       for (const item of validated.items) {
-        const prod = productMap.get(item.productId);
-        if (!prod) {
-          throw new Error(`Product with ID '${item.productId}' not found.`);
+        // Find or update/create the product based on SKU
+        const existingProduct = await tx.product.findUnique({
+          where: { sku: item.sku }
+        });
+
+        let prod;
+        if (existingProduct) {
+          // Update existing product details directly in the Product database table
+          prod = await tx.product.update({
+            where: { id: existingProduct.id },
+            data: {
+              name: item.name,
+              hsnCode: item.hsnCode,
+              gstRate: item.gstRate,
+            }
+          });
+        } else {
+          // Create a new product directly in the Product database table
+          prod = await tx.product.create({
+            data: {
+              sku: item.sku,
+              name: item.name,
+              hsnCode: item.hsnCode,
+              gstRate: item.gstRate,
+              brand: "General",       // Default placeholder
+              category: "General",    // Default placeholder
+            }
+          });
         }
 
-        const amount = item.quantity * item.rate;
-        computedTaxable += amount;
+        const rowBaseAmount = item.quantity * item.rate;
+        const rowDiscount = item.discount || 0;
+        const rowFinalPrice = Math.max(0, rowBaseAmount - rowDiscount);
 
-        const itemGst = amount * (prod.gstRate / 100);
+        const itemGlobalDiscount = subtotal > 0 ? (discount * (rowFinalPrice / subtotal)) : 0;
+        const itemTaxableAmount = Math.max(0, rowFinalPrice - itemGlobalDiscount);
+
+        computedTaxable += itemTaxableAmount;
+
+        const itemGst = itemTaxableAmount * (prod.gstRate / 100);
         if (gstType === "IGST") {
           computedIgst += itemGst;
         } else {
@@ -444,10 +475,11 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
         }
 
         billItemsData.push({
-          productId: item.productId,
+          productId: prod.id,
           quantity: item.quantity,
           rate: item.rate,
-          amount: amount,
+          discount: rowDiscount,
+          amount: rowFinalPrice,
         });
       }
 
@@ -456,7 +488,8 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
         computedCgst +
         computedSgst +
         computedIgst +
-        validated.transportCharges;
+        validated.transportCharges +
+        (validated.roundOff || 0);
 
       const supplier = await tx.supplier.findUnique({
         where: { id: validated.supplierId }
@@ -483,6 +516,9 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
           sgst: computedSgst,
           igst: computedIgst,
           transportCharges: validated.transportCharges,
+          discount: discount,
+          roundOff: validated.roundOff || 0,
+          remarks: validated.remarks || null,
           grandTotal: grandTotal,
           items: {
             create: billItemsData,

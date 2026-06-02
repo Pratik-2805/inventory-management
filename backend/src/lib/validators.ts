@@ -22,9 +22,14 @@ export const productSchema = z.object({
 });
 
 export const purchaseItemSchema = z.object({
-  productId: z.string().uuid("Invalid product ID selection"),
+  productId: z.string().uuid("Invalid product ID selection").optional().nullable(),
+  sku: z.string().min(3, "SKU must be at least 3 characters").toUpperCase(),
+  name: z.string().min(2, "Product name must be at least 2 characters"),
+  hsnCode: z.string().min(4, "HSN Code must be at least 4 digits").regex(/^[0-9]+$/, "HSN Code must contain only numbers"),
+  gstRate: z.number().min(0, "GST rate cannot be negative").max(100, "GST rate cannot exceed 100"),
   quantity: z.number().int().gt(0, "Quantity must be greater than 0"),
   rate: z.number().gt(0, "Rate must be greater than 0"),
+  discount: z.number().min(0, "Discount cannot be negative").default(0),
 });
 
 export const purchaseBillSchema = z.object({
@@ -34,6 +39,9 @@ export const purchaseBillSchema = z.object({
   invoiceNumber: z.string().min(1, "Invoice number is required"),
   invoiceDate: z.string().or(z.date()).transform((val) => new Date(val)),
   transportCharges: z.number().min(0, "Transport charges cannot be negative").default(0),
+  discount: z.number().min(0, "Discount cannot be negative").default(0),
+  roundOff: z.number().default(0),
+  remarks: z.string().optional().nullable(),
   items: z.array(purchaseItemSchema).min(1, "At least one item is required in a purchase bill"),
 });
 

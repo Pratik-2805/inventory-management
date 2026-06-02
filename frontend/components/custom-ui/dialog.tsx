@@ -72,9 +72,10 @@ const DialogTrigger: React.FC<DialogTriggerProps> = ({ asChild, children }) => {
 
 interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
   onOpenChange?: (open: boolean) => void
+  fullScreen?: boolean
 }
 
-const DialogContent: React.FC<DialogContentProps> = ({ className, onOpenChange, children, ...props }) => {
+const DialogContent: React.FC<DialogContentProps> = ({ className, onOpenChange, fullScreen, children, ...props }) => {
   const { open, onOpenChange: contextOnOpenChange } = useDialog()
   const actualOnOpenChange = onOpenChange || contextOnOpenChange
 
@@ -92,7 +93,10 @@ const DialogContent: React.FC<DialogContentProps> = ({ className, onOpenChange, 
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className={cn(
+          "fixed inset-0 z-50 flex items-center justify-center",
+          !fullScreen && "p-4"
+        )}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -102,12 +106,14 @@ const DialogContent: React.FC<DialogContentProps> = ({ className, onOpenChange, 
             onClick={() => actualOnOpenChange(false)}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2 }}
+            initial={fullScreen ? { opacity: 0, y: '100%' } : { opacity: 0, scale: 0.95, y: 20 }}
+            animate={fullScreen ? { opacity: 1, y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={fullScreen ? { opacity: 0, y: '100%' } : { opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             className={cn(
-              'relative w-full max-w-lg rounded-lg border border-border bg-background p-6 shadow-lg z-50',
+              fullScreen 
+                ? 'relative w-screen h-screen max-w-none border-none bg-background shadow-lg z-50 flex flex-col overflow-hidden'
+                : 'relative w-full max-w-lg rounded-lg border border-border bg-background p-6 shadow-lg z-50',
               className
             )}
             {...props}
@@ -115,9 +121,9 @@ const DialogContent: React.FC<DialogContentProps> = ({ className, onOpenChange, 
             {actualOnOpenChange && (
               <button
                 onClick={() => actualOnOpenChange(false)}
-                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-50"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             )}
             {children}

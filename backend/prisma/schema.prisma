@@ -83,6 +83,9 @@ model PurchaseBill {
   sgst              Float
   igst              Float
   transportCharges  Float
+  discount          Float    @default(0)
+  roundOff          Float    @default(0)
+  remarks           String?
   grandTotal        Float
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -101,6 +104,7 @@ model PurchaseItem {
   productId      String
   quantity       Int
   rate           Float
+  discount       Float    @default(0)
   amount         Float
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
