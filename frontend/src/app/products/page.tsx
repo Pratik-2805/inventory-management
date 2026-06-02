@@ -7,7 +7,7 @@ import {
   updateProduct, 
   deleteProduct 
 } from "@/actions/products";
-import { Plus, Search, Edit2, Trash2, Tag, Layers, Percent, ShieldAlert, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Tag, Layers, Percent, ShieldAlert, Loader2, ChevronLeft, ChevronRight, Hash, ShoppingBag, Folder } from "lucide-react";
 
 interface Product {
   id: string;
@@ -302,116 +302,119 @@ export default function ProductsPage() {
       {/* Add/Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-card w-full max-w-lg rounded-xl border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-card w-full max-w-lg rounded-2xl border border-border shadow-2xl overflow-hidden animate-modal">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-border bg-muted/40 flex items-center justify-between">
-              <h3 className="font-bold text-lg">
-                {isEdit ? "Edit Product" : "Add Product"}
+            <div className="px-6 py-5 border-b border-border bg-muted/30 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-foreground tracking-tight">
+                {isEdit ? "✏️ Edit Product Master" : "📦 Add New Product"}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+                className="text-muted-foreground hover:text-foreground text-sm font-semibold hover:bg-muted p-1 px-2.5 rounded-lg transition-colors"
               >
                 Close
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs font-semibold flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    SKU (Stock Keeping Unit)
-                  </label>
-                  <input
-                    type="text"
-                    name="sku"
-                    required
-                    placeholder="e.g. E-SH-9213"
-                    value={formData.sku}
-                    onChange={handleInputChange}
-                    className="input-field font-mono uppercase"
-                    disabled={isEdit} // SKU shouldn't be editable typically
-                  />
+                <div className="form-group space-y-1">
+                  <label className="form-label">SKU (Stock Keeping Unit)</label>
+                  <div className="input-icon-wrapper">
+                    <Hash className="input-icon" />
+                    <input
+                      type="text"
+                      name="sku"
+                      required
+                      placeholder="e.g. E-SH-9213"
+                      value={formData.sku}
+                      onChange={handleInputChange}
+                      className="input-field font-mono uppercase"
+                      disabled={isEdit}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Product Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="e.g. YOGINI"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Brand
-                  </label>
-                  <input
-                    type="text"
-                    name="brand"
-                    required
-                    placeholder="e.g. Abhivadan Fashion"
-                    value={formData.brand}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    name="category"
-                    required
-                    placeholder="e.g. Shirts"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
+                <div className="form-group space-y-1">
+                  <label className="form-label">Product Name</label>
+                  <div className="input-icon-wrapper">
+                    <ShoppingBag className="input-icon" />
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="e.g. YOGINI"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    HSN Code
-                  </label>
-                  <input
-                    type="text"
-                    name="hsnCode"
-                    required
-                    placeholder="e.g. 6205"
-                    value={formData.hsnCode}
-                    onChange={handleInputChange}
-                    className="input-field font-mono"
-                  />
+                <div className="form-group space-y-1">
+                  <label className="form-label">Brand</label>
+                  <div className="input-icon-wrapper">
+                    <Tag className="input-icon" />
+                    <input
+                      type="text"
+                      name="brand"
+                      required
+                      placeholder="e.g. Abhivadan Fashion"
+                      value={formData.brand}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    GST Rate (%)
-                  </label>
+                <div className="form-group space-y-1">
+                  <label className="form-label">Category</label>
+                  <div className="input-icon-wrapper">
+                    <Folder className="input-icon" />
+                    <input
+                      type="text"
+                      name="category"
+                      required
+                      placeholder="e.g. Shirts"
+                      value={formData.category}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="form-group space-y-1">
+                  <label className="form-label">HSN Code</label>
+                  <div className="input-icon-wrapper">
+                    <Hash className="input-icon" />
+                    <input
+                      type="text"
+                      name="hsnCode"
+                      required
+                      placeholder="e.g. 6205"
+                      value={formData.hsnCode}
+                      onChange={handleInputChange}
+                      className="input-field font-mono"
+                    />
+                  </div>
+                </div>
+                <div className="form-group space-y-1">
+                  <label className="form-label">GST Rate (%)</label>
                   <select
                     name="gstRate"
                     value={formData.gstRate}
                     onChange={(e) => setFormData(prev => ({ ...prev, gstRate: parseFloat(e.target.value) }))}
-                    className="input-field"
+                    className="input-field font-semibold"
                   >
                     <option value={0}>0% (Exempt)</option>
                     <option value={5}>5% (Garments/Base)</option>
@@ -423,7 +426,7 @@ export default function ProductsPage() {
               </div>
 
               {/* Form Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex items-center justify-end gap-3 pt-5 border-t border-border mt-6">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
@@ -434,7 +437,7 @@ export default function ProductsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary min-w-[100px] flex items-center justify-center"
+                  className="btn-primary min-w-[110px]"
                   disabled={submitting}
                 >
                   {submitting ? (
@@ -443,7 +446,7 @@ export default function ProductsPage() {
                       Saving...
                     </>
                   ) : (
-                    "Save"
+                    "Save Details"
                   )}
                 </button>
               </div>

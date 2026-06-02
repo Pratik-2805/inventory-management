@@ -7,7 +7,7 @@ import {
   updateSupplier, 
   deleteSupplier 
 } from "@/actions/suppliers";
-import { Plus, Search, Edit2, Trash2, Mail, Phone, MapPin, ShieldAlert, Loader2 } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Mail, Phone, MapPin, ShieldAlert, Loader2, User, FileText } from "lucide-react";
 
 interface Supplier {
   id: string;
@@ -261,108 +261,113 @@ export default function SuppliersPage() {
       {/* Add/Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-card w-full max-w-lg rounded-xl border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-card w-full max-w-lg rounded-2xl border border-border shadow-2xl overflow-hidden animate-modal">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-border bg-muted/40 flex items-center justify-between">
-              <h3 className="font-bold text-lg">
-                {isEdit ? "Edit Supplier" : "Add Supplier"}
+            <div className="px-6 py-5 border-b border-border bg-muted/30 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-foreground tracking-tight">
+                {isEdit ? "✏️ Edit Supplier Profile" : "🏭 Add New Supplier"}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+                className="text-muted-foreground hover:text-foreground text-sm font-semibold hover:bg-muted p-1 px-2.5 rounded-lg transition-colors"
               >
                 Close
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs font-semibold flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Supplier Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  placeholder="e.g. Senseo Ethnic LLP"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="input-field"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    GSTIN
-                  </label>
+              <div className="form-group space-y-1">
+                <label className="form-label">Supplier Name</label>
+                <div className="input-icon-wrapper">
+                  <User className="input-icon" />
                   <input
                     type="text"
-                    name="gstin"
+                    name="name"
                     required
-                    maxLength={15}
-                    placeholder="e.g. 22AAAAA0000A1Z5"
-                    value={formData.gstin}
-                    onChange={handleInputChange}
-                    className="input-field font-mono uppercase"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    required
-                    placeholder="e.g. 9876543210"
-                    value={formData.phone}
+                    placeholder="e.g. Senseo Ethnic LLP"
+                    value={formData.name}
                     onChange={handleInputChange}
                     className="input-field"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="e.g. contact@supplier.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="input-field"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="form-group space-y-1">
+                  <label className="form-label">GSTIN</label>
+                  <div className="input-icon-wrapper">
+                    <FileText className="input-icon" />
+                    <input
+                      type="text"
+                      name="gstin"
+                      required
+                      maxLength={15}
+                      placeholder="e.g. 22AAAAA0000A1Z5"
+                      value={formData.gstin}
+                      onChange={handleInputChange}
+                      className="input-field font-mono uppercase"
+                    />
+                  </div>
+                </div>
+                <div className="form-group space-y-1">
+                  <label className="form-label">Phone Number</label>
+                  <div className="input-icon-wrapper">
+                    <Phone className="input-icon" />
+                    <input
+                      type="text"
+                      name="phone"
+                      required
+                      placeholder="e.g. 9876543210"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Address
-                </label>
-                <textarea
-                  name="address"
-                  required
-                  rows={3}
-                  placeholder="Street address, City, State, ZIP"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="input-field resize-none"
-                />
+              <div className="form-group space-y-1">
+                <label className="form-label">Email Address</label>
+                <div className="input-icon-wrapper">
+                  <Mail className="input-icon" />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="e.g. contact@supplier.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group space-y-1">
+                <label className="form-label">Address</label>
+                <div className="input-icon-wrapper">
+                  <MapPin className="input-icon" />
+                  <textarea
+                    name="address"
+                    required
+                    rows={3}
+                    placeholder="Street address, City, State, ZIP"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    className="input-field resize-none"
+                  />
+                </div>
               </div>
 
               {/* Form Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex items-center justify-end gap-3 pt-5 border-t border-border mt-6">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
@@ -373,7 +378,7 @@ export default function SuppliersPage() {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary min-w-[100px] flex items-center justify-center"
+                  className="btn-primary min-w-[110px]"
                   disabled={submitting}
                 >
                   {submitting ? (
@@ -382,7 +387,7 @@ export default function SuppliersPage() {
                       Saving...
                     </>
                   ) : (
-                    "Save"
+                    "Save Details"
                   )}
                 </button>
               </div>

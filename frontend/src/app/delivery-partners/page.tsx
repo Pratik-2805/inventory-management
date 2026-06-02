@@ -7,7 +7,7 @@ import {
   updateDeliveryPartner, 
   deleteDeliveryPartner 
 } from "@/actions/delivery-partners";
-import { Plus, Search, Edit2, Trash2, Mail, Phone, ShieldAlert, Loader2, Compass } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Mail, Phone, ShieldAlert, Loader2, Compass, User, Truck } from "lucide-react";
 
 interface DeliveryPartner {
   id: string;
@@ -251,79 +251,80 @@ export default function DeliveryPartnersPage() {
       {/* Add/Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-card w-full max-w-lg rounded-xl border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-card w-full max-w-lg rounded-2xl border border-border shadow-2xl overflow-hidden animate-modal">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-border bg-muted/40 flex items-center justify-between">
-              <h3 className="font-bold text-lg">
-                {isEdit ? "Edit Delivery Partner" : "Add Delivery Partner"}
+            <div className="px-6 py-5 border-b border-border bg-muted/30 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-foreground tracking-tight">
+                {isEdit ? "✏️ Edit Courier Partner" : "🚚 Add Delivery Partner"}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+                className="text-muted-foreground hover:text-foreground text-sm font-semibold hover:bg-muted p-1 px-2.5 rounded-lg transition-colors"
               >
                 Close
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-xs font-semibold flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Partner Name / Company
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  placeholder="e.g. Blue Dart, Delhivery"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="input-field"
-                />
+              <div className="form-group space-y-1">
+                <label className="form-label">Partner Name / Company</label>
+                <div className="input-icon-wrapper">
+                  <Truck className="input-icon" />
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="e.g. Blue Dart, Delhivery"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="input-field"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    required
-                    placeholder="e.g. 1800200300"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
+                <div className="form-group space-y-1">
+                  <label className="form-label">Phone Number</label>
+                  <div className="input-icon-wrapper">
+                    <Phone className="input-icon" />
+                    <input
+                      type="text"
+                      name="phone"
+                      required
+                      placeholder="e.g. 1800200300"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="e.g. support@courier.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="input-field"
-                  />
+                <div className="form-group space-y-1">
+                  <label className="form-label">Email Address</label>
+                  <div className="input-icon-wrapper">
+                    <Mail className="input-icon" />
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="e.g. support@courier.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="input-field"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Status
-                </label>
+              <div className="form-group space-y-1">
+                <label className="form-label">Status</label>
                 <select
                   name="status"
                   value={formData.status}
@@ -336,7 +337,7 @@ export default function DeliveryPartnersPage() {
               </div>
 
               {/* Form Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border mt-6">
+              <div className="flex items-center justify-end gap-3 pt-5 border-t border-border mt-6">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
@@ -347,7 +348,7 @@ export default function DeliveryPartnersPage() {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary min-w-[100px] flex items-center justify-center"
+                  className="btn-primary min-w-[110px]"
                   disabled={submitting}
                 >
                   {submitting ? (
@@ -356,7 +357,7 @@ export default function DeliveryPartnersPage() {
                       Saving...
                     </>
                   ) : (
-                    "Save"
+                    "Save Details"
                   )}
                 </button>
               </div>

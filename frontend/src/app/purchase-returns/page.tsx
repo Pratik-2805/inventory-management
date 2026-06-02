@@ -551,7 +551,7 @@ export default function PurchaseReturnsPage() {
       {/* Return Details Modal */}
       {selectedReturn && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-card w-full max-w-2xl rounded-xl border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-card w-full max-w-2xl rounded-2xl border border-border shadow-2xl overflow-hidden animate-modal">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-border bg-muted/40 flex items-center justify-between">
               <div>
