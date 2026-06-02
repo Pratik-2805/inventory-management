@@ -64,6 +64,7 @@ interface PurchaseBill {
   deliveryPartnerId?: string | null
   trackingNumber?: string | null
   invoiceNumber: string
+  purchaseCode: string
   invoiceDate: string
   taxableAmount: number
   cgst: number
@@ -293,6 +294,7 @@ export default function PurchasesPage() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
+                    <TableHead>Purchase Code</TableHead>
                     <TableHead>Invoice Number</TableHead>
                     <TableHead>Supplier</TableHead>
                     <TableHead>Date</TableHead>
@@ -308,7 +310,7 @@ export default function PurchasesPage() {
                 <TableBody>
                   {filteredPurchases.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-6 text-muted-foreground text-sm">
+                      <TableCell colSpan={11} className="text-center py-6 text-muted-foreground text-sm">
                         No purchase invoices recorded.
                       </TableCell>
                     </TableRow>
@@ -322,7 +324,8 @@ export default function PurchasesPage() {
                           setIsViewOpen(true)
                         }}
                       >
-                        <TableCell className="font-mono text-sm font-semibold">{bill.invoiceNumber}</TableCell>
+                        <TableCell className="font-mono text-sm font-semibold text-primary">{bill.purchaseCode}</TableCell>
+                        <TableCell className="font-mono text-sm">{bill.invoiceNumber}</TableCell>
                         <TableCell className="font-medium">{bill.supplier?.name}</TableCell>
                         <TableCell>{new Date(bill.invoiceDate).toLocaleDateString()}</TableCell>
                         <TableCell className="text-right">₹{bill.taxableAmount.toLocaleString('en-IN')}</TableCell>
@@ -600,13 +603,13 @@ export default function PurchasesPage() {
               <div className="flex justify-between items-start border-b pb-4">
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                    Purchase Invoice Reference
+                    Purchase Order: {viewBill.purchaseCode}
                   </div>
                   <h2 className="text-2xl font-bold tracking-tight mt-1">SITARA HUB</h2>
                   <p className="text-xs text-muted-foreground">Inventory Management & Supply System</p>
                 </div>
                 <div className="text-right space-y-1">
-                  <p className="text-sm font-semibold font-mono text-foreground">#{viewBill.invoiceNumber}</p>
+                  <p className="text-sm font-semibold font-mono text-foreground">Inv: #{viewBill.invoiceNumber}</p>
                   <p className="text-xs text-muted-foreground">Date: {new Date(viewBill.invoiceDate).toLocaleDateString()}</p>
                   <p className="text-xs text-muted-foreground">Recorded: {new Date(viewBill.createdAt).toLocaleString()}</p>
                 </div>

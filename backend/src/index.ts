@@ -458,12 +458,25 @@ app.post("/api/purchases", async (req: Request, res: Response) => {
         computedIgst +
         validated.transportCharges;
 
+      const supplier = await tx.supplier.findUnique({
+        where: { id: validated.supplierId }
+      });
+      if (!supplier) {
+        throw new Error("Supplier not found");
+      }
+
+      const purchaseCount = await tx.purchaseBill.count({
+        where: { supplierId: validated.supplierId }
+      });
+      const purchaseCode = `${supplier.code}-${(purchaseCount + 1).toString().padStart(4, "0")}`;
+
       const bill = await tx.purchaseBill.create({
         data: {
           supplierId: validated.supplierId,
           deliveryPartnerId: validated.deliveryPartnerId || null,
           trackingNumber: validated.trackingNumber || null,
           invoiceNumber: validated.invoiceNumber,
+          purchaseCode: purchaseCode,
           invoiceDate: validated.invoiceDate,
           taxableAmount: computedTaxable,
           cgst: computedCgst,

@@ -5,7 +5,8 @@ const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i;
 
 export const supplierSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
-  gstin: z.string().regex(gstinRegex, "Invalid GSTIN format (e.g. 22AAAAA0000A1Z5)"),
+  code: z.string().min(2, "Supplier Code must be at least 2 characters").max(10, "Supplier Code cannot exceed 10 characters").toUpperCase(),
+  gstin: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, "Invalid GSTIN format"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   email: z.string().email("Invalid email address"),
   address: z.string().min(5, "Address must be at least 5 characters long"),

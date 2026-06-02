@@ -26,6 +26,7 @@ import { api } from '@/lib/api-client'
 interface Supplier {
   id: string
   name: string
+  code: string
   gstin: string
   phone: string
   email: string
@@ -59,6 +60,7 @@ export default function SuppliersPage() {
   // Form states
   const [formData, setFormData] = useState({
     name: '',
+    code: '',
     gstin: '',
     phone: '',
     email: '',
@@ -110,6 +112,7 @@ export default function SuppliersPage() {
     setEditingSupplier(null)
     setFormData({
       name: '',
+      code: '',
       gstin: '',
       phone: '',
       email: '',
@@ -124,6 +127,7 @@ export default function SuppliersPage() {
     setEditingSupplier(supplier)
     setFormData({
       name: supplier.name,
+      code: supplier.code,
       gstin: supplier.gstin,
       phone: supplier.phone,
       email: supplier.email,
@@ -154,7 +158,7 @@ export default function SuppliersPage() {
     setFormError(null)
 
     // Basic validation
-    if (!formData.name || !formData.gstin || !formData.phone || !formData.email || !formData.address) {
+    if (!formData.name || !formData.code || !formData.gstin || !formData.phone || !formData.email || !formData.address) {
       setFormError('All fields are required')
       return
     }
@@ -226,6 +230,7 @@ export default function SuppliersPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead>Supplier Name</TableHead>
+                    <TableHead>Code</TableHead>
                     <TableHead>GSTIN</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Phone</TableHead>
@@ -238,7 +243,7 @@ export default function SuppliersPage() {
                 <TableBody>
                   {suppliers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-muted-foreground text-sm">
+                      <TableCell colSpan={9} className="text-center py-6 text-muted-foreground text-sm">
                         No suppliers found.
                       </TableCell>
                     </TableRow>
@@ -248,6 +253,7 @@ export default function SuppliersPage() {
                       return (
                         <TableRow key={supplier.id} className="hover:bg-muted/50">
                           <TableCell className="font-medium">{supplier.name}</TableCell>
+                          <TableCell className="font-mono text-sm font-semibold text-primary">{supplier.code}</TableCell>
                           <TableCell className="font-mono text-xs font-semibold">{supplier.gstin}</TableCell>
                           <TableCell className="text-sm">{supplier.email}</TableCell>
                           <TableCell className="text-sm">{supplier.phone}</TableCell>
@@ -305,14 +311,25 @@ export default function SuppliersPage() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Supplier Legal Name</label>
-                <Input 
-                  id="name" 
-                  value={formData.name} 
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                  placeholder="e.g. Acme Corporation" 
-                />
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 space-y-2">
+                  <label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Supplier Legal Name</label>
+                  <Input 
+                    id="name" 
+                    value={formData.name} 
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                    placeholder="e.g. Acme Corporation" 
+                  />
+                </div>
+                <div className="col-span-1 space-y-2">
+                  <label htmlFor="code" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Supplier Code</label>
+                  <Input 
+                    id="code" 
+                    value={formData.code} 
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })} 
+                    placeholder="e.g. ACM" 
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

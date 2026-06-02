@@ -19,6 +19,7 @@ enum MovementType {
 model Supplier {
   id        String   @id @default(uuid())
   name      String
+  code      String   @unique @default("SUPPLIER")
   gstin     String
   phone     String
   email     String
@@ -75,6 +76,7 @@ model PurchaseBill {
   deliveryPartnerId String?
   trackingNumber    String?
   invoiceNumber     String
+  purchaseCode      String   @unique
   invoiceDate       DateTime
   taxableAmount     Float
   cgst              Float

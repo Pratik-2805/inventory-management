@@ -47,6 +47,7 @@ interface PurchaseBill {
   id: string
   supplierId: string
   invoiceNumber: string
+  purchaseCode: string
   invoiceDate: string
   items: PurchaseItem[]
 }
@@ -325,6 +326,7 @@ export default function ReturnsPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead>Return ID</TableHead>
+                    <TableHead>Purchase Code</TableHead>
                     <TableHead>Ref Invoice</TableHead>
                     <TableHead>Supplier</TableHead>
                     <TableHead>Date</TableHead>
@@ -337,7 +339,7 @@ export default function ReturnsPage() {
                 <TableBody>
                   {filteredReturns.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-muted-foreground text-sm">
+                      <TableCell colSpan={9} className="text-center py-6 text-muted-foreground text-sm">
                         No purchase returns recorded.
                       </TableCell>
                     </TableRow>
@@ -352,6 +354,7 @@ export default function ReturnsPage() {
                         }}
                       >
                         <TableCell className="font-mono text-xs font-semibold">{ret.id.substring(0, 8)}...</TableCell>
+                        <TableCell className="font-mono text-sm font-semibold text-primary">{ret.purchaseBill?.purchaseCode}</TableCell>
                         <TableCell className="font-mono text-sm">{ret.purchaseBill?.invoiceNumber}</TableCell>
                         <TableCell className="font-medium">{ret.supplier?.name}</TableCell>
                         <TableCell>{new Date(ret.returnDate).toLocaleDateString()}</TableCell>
@@ -431,7 +434,7 @@ export default function ReturnsPage() {
                     <option value="">-- Select Invoice --</option>
                     {filteredBills.map((b) => (
                       <option key={b.id} value={b.id}>
-                        {b.invoiceNumber} ({new Date(b.invoiceDate).toLocaleDateString()})
+                        {b.purchaseCode} (Inv: #{b.invoiceNumber})
                       </option>
                     ))}
                   </SelectNative>
@@ -563,9 +566,9 @@ export default function ReturnsPage() {
                   <p className="text-xs text-muted-foreground">Inventory Management & Supply System</p>
                 </div>
                 <div className="text-right space-y-1">
-                  <p className="text-sm font-semibold font-mono text-foreground">Return ID: {viewReturn.id.substring(0, 8).toUpperCase()}</p>
+                  <p className="text-sm font-semibold font-mono text-foreground">PO Ref: {viewReturn.purchaseBill?.purchaseCode}</p>
                   <p className="text-xs text-muted-foreground">Date: {new Date(viewReturn.returnDate).toLocaleDateString()}</p>
-                  <p className="text-xs text-muted-foreground">Ref Invoice: <span className="font-mono font-semibold">#{viewReturn.purchaseBill?.invoiceNumber}</span></p>
+                  <p className="text-xs text-muted-foreground">Inv Ref: <span className="font-mono font-semibold">#{viewReturn.purchaseBill?.invoiceNumber}</span></p>
                 </div>
               </div>
 
