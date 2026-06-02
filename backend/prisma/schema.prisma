@@ -1,0 +1,150 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MovementType {
+  PURCHASE
+  PURCHASE_RETURN
+  SALE
+  CUSTOMER_RETURN
+  DAMAGE
+  ADJUSTMENT
+}
+
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  gstin     String
+  phone     String
+  email     String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseBills   PurchaseBill[]
+  purchaseReturns PurchaseReturn[]
+}
+
+model DeliveryPartner {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String
+  status    String   @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseBills PurchaseBill[]
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  sku       String   @unique
+  name      String
+  brand     String
+  category  String
+  hsnCode   String
+  gstRate   Float    // percentage, e.g., 5, 12, 18, 28
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stockMovements      StockMovement[]
+  purchaseItems       PurchaseItem[]
+  purchaseReturnItems PurchaseReturnItem[]
+}
+
+model PurchaseBill {
+  id                String   @id @default(uuid())
+  supplierId        String
+  deliveryPartnerId String?
+  trackingNumber    String?
+  invoiceNumber     String
+  invoiceDate       DateTime
+  taxableAmount     Float
+  cgst              Float
+  sgst              Float
+  igst              Float
+  transportCharges  Float
+  grandTotal        Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  supplier        Supplier         @relation(fields: [supplierId], references: [id])
+  deliveryPartner DeliveryPartner? @relation(fields: [deliveryPartnerId], references: [id])
+  items           PurchaseItem[]
+  purchaseReturns PurchaseReturn[]
+
+  @@unique([supplierId, invoiceNumber])
+}
+
+model PurchaseItem {
+  id             String   @id @default(uuid())
+  purchaseBillId String
+  productId      String
+  quantity       Int
+  rate           Float
+  amount         Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  purchaseBill PurchaseBill @relation(fields: [purchaseBillId], references: [id], onDelete: Cascade)
+  product      Product      @relation(fields: [productId], references: [id])
+}
+
+model StockMovement {
+  id            String       @id @default(uuid())
+  productId     String
+  movementType  MovementType
+  quantity      Int          // positive for incoming, negative for outgoing
+  referenceType String       // e.g. "PURCHASE", "PURCHASE_RETURN"
+  referenceId   String       // ID of PurchaseBill or PurchaseReturn
+  remarks       String?
+  createdAt     DateTime     @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model PurchaseReturn {
+  id             String   @id @default(uuid())
+  supplierId     String
+  purchaseBillId String
+  returnDate     DateTime
+  reason         String?
+  totalAmount    Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  supplier     Supplier             @relation(fields: [supplierId], references: [id])
+  purchaseBill PurchaseBill         @relation(fields: [purchaseBillId], references: [id])
+  items        PurchaseReturnItem[]
+}
+
+model PurchaseReturnItem {
+  id               String   @id @default(uuid())
+  purchaseReturnId String
+  productId        String
+  quantity         Int
+  rate             Float
+  amount           Float
+  reason           String   // Stitching Defect, Fabric Damage, etc.
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  purchaseReturn PurchaseReturn @relation(fields: [purchaseReturnId], references: [id], onDelete: Cascade)
+  product        Product        @relation(fields: [productId], references: [id])
+}
