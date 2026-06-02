@@ -43,6 +43,7 @@ const navigationItems = [
     items: [
       { title: 'Purchases', href: '/purchases' },
       { title: 'Suppliers', href: '/suppliers' },
+      { title: 'Delivery Partners', href: '/delivery-partners' },
       { title: 'Purchase Returns', href: '/purchase-returns' },
     ],
   },

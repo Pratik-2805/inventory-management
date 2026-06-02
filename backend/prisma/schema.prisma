@@ -33,8 +33,9 @@ model Supplier {
 model DeliveryPartner {
   id        String   @id @default(uuid())
   name      String
-  phone     String
-  email     String
+  phone     String?
+  email     String?
+  type      String   @default("TRANSPORT") // "TRANSPORT", "LOCAL"
   status    String   @default("ACTIVE") // ACTIVE, INACTIVE
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
